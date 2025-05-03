@@ -64,7 +64,21 @@ class FBOpenapiGenerationPlugin : Plugin<Project> {
 
                 // Создай глобальный .openapi-generator-ignore, если его нет
                 if (!globalIgnore.exists()) {
-                    globalIgnore.writeText("# Global OpenAPI ignore file\n")
+                    //  globalIgnore.writeText("# Global OpenAPI ignore file\n") - trash
+                    globalIgnore.writeText("""
+                        # Global OpenAPI ignore file
+                        # That file just tells the generator,
+                        #"don't touch these files, don't create or overwrite them."
+                
+                        # this file should be in every submodule.
+                        pom.xml
+                        build.gradle
+                        build.gradle.kts
+                        **/ApiUtil.java
+                        **/resources/*.yml
+                        **/resources/*.configuration
+                        *.md
+                        """.trimIndent())
                 }
 
                 if (projectIgnore.exists()) {
