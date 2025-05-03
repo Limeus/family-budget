@@ -1,4 +1,4 @@
-package com.limeus;
+package com.limeus.commonlib;
 
 public class Main {
     public static void main(String[] args) {
