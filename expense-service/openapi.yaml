@@ -283,25 +283,25 @@ components:
           type: string
           description: "Updated comment about the expense."
           example: "Went to the movies."
-    ExpenseFilterRequest:
-      type: object
-      properties:
-        scope:
-          type: string
-          enum: [ user, family ]
-          description: "The scope of the expenses to filter. 'user' for the current user's expenses, 'family' for the entire family's expenses."
-          example: "user"
-        fromDate:
-          type: string
-          format: date
-          description: "Filter expenses from this date (inclusive)."
-          example: "2023-10-01"
-        toDate:
-          type: string
-          format: date
-          description: "Filter expenses up to this date (inclusive)."
-          example: "2023-10-31"
-        category:
-          type: string
-          description: "Filter expenses by this category."
-          example: "Travel"
+#    ExpenseFilterRequest:
+#      type: object
+#      properties:
+#        scope:
+#          type: string
+#          enum: [ user, family ]
+#          description: "The scope of the expenses to filter. 'user' for the current user's expenses, 'family' for the entire family's expenses."
+#          example: "user"
+#        fromDate:
+#          type: string
+#          format: date
+#          description: "Filter expenses from this date (inclusive)."
+#          example: "2023-10-01"
+#        toDate:
+#          type: string
+#          format: date
+#          description: "Filter expenses up to this date (inclusive)."
+#          example: "2023-10-31"
+#        category:
+#          type: string
+#          description: "Filter expenses by this category."
+#          example: "Travel"
