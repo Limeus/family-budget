@@ -1,1 +1,13 @@
 # Global OpenAPI ignore file
+
+# That file just tells the generator,
+#"don't touch these files, don't create or overwrite them."
+
+# this file should be in every submodule.
+pom.xml
+build.gradle
+build.gradle.kts
+**/ApiUtil.java
+**/resources/*.yml
+**/resources/*.configuration
+*.md
