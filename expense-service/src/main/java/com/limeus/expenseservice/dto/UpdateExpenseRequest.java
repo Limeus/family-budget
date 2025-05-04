@@ -1,15 +1,20 @@
 package com.limeus.expenseservice.dto;
 
+import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
+import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
@@ -19,16 +24,16 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class UpdateExpenseRequest {
 
-  private @Nullable Float amount;
+  private @Nullable BigDecimal amount;
 
   private @Nullable String category;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private @Nullable LocalDate date;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private @Nullable OffsetDateTime date;
 
   private @Nullable String comment;
 
-  public UpdateExpenseRequest amount(Float amount) {
+  public UpdateExpenseRequest amount(BigDecimal amount) {
     this.amount = amount;
     return this;
   }
@@ -37,14 +42,14 @@ public class UpdateExpenseRequest {
    * The updated amount of the expense.
    * @return amount
    */
-  
+  @Valid 
   @Schema(name = "amount", example = "60.0", description = "The updated amount of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("amount")
-  public Float getAmount() {
+  public BigDecimal getAmount() {
     return amount;
   }
 
-  public void setAmount(Float amount) {
+  public void setAmount(BigDecimal amount) {
     this.amount = amount;
   }
 
@@ -68,23 +73,23 @@ public class UpdateExpenseRequest {
     this.category = category;
   }
 
-  public UpdateExpenseRequest date(LocalDate date) {
+  public UpdateExpenseRequest date(OffsetDateTime date) {
     this.date = date;
     return this;
   }
 
   /**
-   * The updated date of the expense.
+   * The updated date and time of the expense.
    * @return date
    */
   @Valid 
-  @Schema(name = "date", example = "2023-10-28", description = "The updated date of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "date", example = "2023-10-27T14:30:00+03:00", description = "The updated date and time of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("date")
-  public LocalDate getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 
-  public void setDate(LocalDate date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 

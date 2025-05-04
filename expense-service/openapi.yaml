@@ -134,10 +134,10 @@ paths:
       responses:
         204:
           description: "The expense has been deleted successfully."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ExpenseResponse"
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/ExpenseResponse"
         401:
           description: "Unauthorized (missing or invalid JWT)."
         404:
@@ -186,7 +186,7 @@ components:
       required: false
       schema:
         type: string
-        format: date
+        format: date-time
     ToDate:
       in: query
       name: toDate
@@ -194,7 +194,7 @@ components:
       required: false
       schema:
         type: string
-        format: date
+        format: date-time
     Category:
       in: query
       name: category
@@ -215,7 +215,7 @@ components:
         amount:
           description: "The exact amount of the expense. Java uses BigDecimal"
           type: number
-          format: float
+          format: decimal
           example: 1234.56
         category:
           type: string
@@ -223,9 +223,9 @@ components:
           example: "Travel"
         date:
           type: string
-          format: date
-          description: "Date of the expense."
-          example: "2023-10-27"
+          format: date-time
+          description: "Date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
         comment:
           type: string
           description: "Optional comment or note about the expense."
@@ -241,12 +241,19 @@ components:
           nullable: true
           description: "Unique identifier of the family to which the expense belongs. Null if not associated with a family."
           example: "01234567-89ab-cdef-0123-456789abcdef"
+      required:
+        - id
+        - amount
+        - category
+        - date
+        - userId
+        - familyId
     CreateExpenseRequest:
       type: object
       properties:
         amount:
           type: number
-          format: float
+          format: decimal
           description: "The amount of the expense."
           example: 50.00
         category:
@@ -255,19 +262,23 @@ components:
           example: "Travel"
         date:
           type: string
-          format: date
-          description: "The date of the expense."
-          example: "2023-10-27"
+          format: date-time
+          description: "Date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
         comment:
           type: string
           description: "Optional comment about the expense."
           example: "Bought groceries for the week."
+      required:
+        - amount
+        - category
+        - date
     UpdateExpenseRequest:
       type: object
       properties:
         amount:
           type: number
-          format: float
+          format: decimal
           description: "The updated amount of the expense."
           example: 60.00
         category:
@@ -276,9 +287,9 @@ components:
           example: "Entertainment"
         date:
           type: string
-          format: date
-          description: "The updated date of the expense."
-          example: "2023-10-28"
+          format: date-time
+          description: "The updated date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
         comment:
           type: string
           description: "Updated comment about the expense."

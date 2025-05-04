@@ -8,11 +8,13 @@ package com.limeus.expenseservice.api;
 import com.limeus.expenseservice.dto.CreateExpenseRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.limeus.expenseservice.dto.ExpenseResponse;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import com.limeus.expenseservice.dto.UpdateExpenseRequest;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,14 +22,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
-
+import jakarta.validation.constraints.*;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Optional;
 import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
@@ -90,9 +98,7 @@ public interface ExpenseApi {
         description = "Delete an expense.",
         tags = { "expense" },
         responses = {
-            @ApiResponse(responseCode = "204", description = "The expense has been deleted successfully.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ExpenseResponse.class))
-            }),
+            @ApiResponse(responseCode = "204", description = "The expense has been deleted successfully."),
             @ApiResponse(responseCode = "401", description = "Unauthorized (missing or invalid JWT)."),
             @ApiResponse(responseCode = "404", description = "Expense not found."),
             @ApiResponse(responseCode = "500", description = "Server error.")
@@ -103,11 +109,10 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/v1/expense/{id}",
-        produces = { "application/json" }
+        value = "/v1/expense/{id}"
     )
     
-    ResponseEntity<ExpenseResponse> deleteExpense(
+    ResponseEntity<Void> deleteExpense(
         @Parameter(name = "id", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     );
 
@@ -190,8 +195,8 @@ public interface ExpenseApi {
     
     ResponseEntity<List<ExpenseResponse>> getExpenses(
         @Parameter(name = "expenseScope", description = "Specifies whose expenses to display. \"user\" — expenses of the current user only, \"family\" — expenses of the whole family.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "expenseScope", required = false, defaultValue = "user") String expenseScope,
-        @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-        @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+        @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+        @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
         @Parameter(name = "category", description = "Filter expenses by this category.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "category", required = false) String category
     );
 

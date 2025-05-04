@@ -9,3 +9,4 @@ build.gradle.kts
 **/resources/*.yml
 **/resources/*.configuration
 *.md
+# Global OpenAPI ignore file

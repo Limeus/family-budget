@@ -1,15 +1,20 @@
 package com.limeus.expenseservice.dto;
 
+import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
+import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
@@ -19,16 +24,29 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class CreateExpenseRequest {
 
-  private @Nullable Float amount;
+  private BigDecimal amount;
 
-  private @Nullable String category;
+  private String category;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private @Nullable LocalDate date;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private OffsetDateTime date;
 
   private @Nullable String comment;
 
-  public CreateExpenseRequest amount(Float amount) {
+  public CreateExpenseRequest() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public CreateExpenseRequest(BigDecimal amount, String category, OffsetDateTime date) {
+    this.amount = amount;
+    this.category = category;
+    this.date = date;
+  }
+
+  public CreateExpenseRequest amount(BigDecimal amount) {
     this.amount = amount;
     return this;
   }
@@ -37,14 +55,14 @@ public class CreateExpenseRequest {
    * The amount of the expense.
    * @return amount
    */
-  
-  @Schema(name = "amount", example = "50.0", description = "The amount of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "amount", example = "50.0", description = "The amount of the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("amount")
-  public Float getAmount() {
+  public BigDecimal getAmount() {
     return amount;
   }
 
-  public void setAmount(Float amount) {
+  public void setAmount(BigDecimal amount) {
     this.amount = amount;
   }
 
@@ -57,8 +75,8 @@ public class CreateExpenseRequest {
    * The category of the expense.
    * @return category
    */
-  
-  @Schema(name = "category", example = "Travel", description = "The category of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "category", example = "Travel", description = "The category of the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("category")
   public String getCategory() {
     return category;
@@ -68,23 +86,23 @@ public class CreateExpenseRequest {
     this.category = category;
   }
 
-  public CreateExpenseRequest date(LocalDate date) {
+  public CreateExpenseRequest date(OffsetDateTime date) {
     this.date = date;
     return this;
   }
 
   /**
-   * The date of the expense.
+   * Date and time of the expense.
    * @return date
    */
-  @Valid 
-  @Schema(name = "date", example = "2023-10-27", description = "The date of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "date", example = "2023-10-27T14:30:00+03:00", description = "Date and time of the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("date")
-  public LocalDate getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 
-  public void setDate(LocalDate date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 

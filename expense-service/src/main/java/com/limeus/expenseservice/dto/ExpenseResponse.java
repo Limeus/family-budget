@@ -1,16 +1,21 @@
 package com.limeus.expenseservice.dto;
 
+import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
+import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
@@ -20,20 +25,36 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class ExpenseResponse {
 
-  private @Nullable UUID id;
+  private UUID id;
 
-  private @Nullable Float amount;
+  private BigDecimal amount;
 
-  private @Nullable String category;
+  private String category;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private @Nullable LocalDate date;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private OffsetDateTime date;
 
   private @Nullable String comment;
 
-  private @Nullable UUID userId;
+  private UUID userId;
 
-  private @Nullable UUID familyId;
+  private UUID familyId;
+
+  public ExpenseResponse() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public ExpenseResponse(UUID id, BigDecimal amount, String category, OffsetDateTime date, UUID userId, UUID familyId) {
+    this.id = id;
+    this.amount = amount;
+    this.category = category;
+    this.date = date;
+    this.userId = userId;
+    this.familyId = familyId;
+  }
 
   public ExpenseResponse id(UUID id) {
     this.id = id;
@@ -44,8 +65,8 @@ public class ExpenseResponse {
    * Unique identifier of the expense.
    * @return id
    */
-  @Valid 
-  @Schema(name = "id", example = "a1b2c3d4-e5f6-7890-1234-567890abcdef", description = "Unique identifier of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "id", example = "a1b2c3d4-e5f6-7890-1234-567890abcdef", description = "Unique identifier of the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("id")
   public UUID getId() {
     return id;
@@ -55,7 +76,7 @@ public class ExpenseResponse {
     this.id = id;
   }
 
-  public ExpenseResponse amount(Float amount) {
+  public ExpenseResponse amount(BigDecimal amount) {
     this.amount = amount;
     return this;
   }
@@ -64,14 +85,14 @@ public class ExpenseResponse {
    * The exact amount of the expense. Java uses BigDecimal
    * @return amount
    */
-  
-  @Schema(name = "amount", example = "1234.56", description = "The exact amount of the expense. Java uses BigDecimal", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "amount", example = "1234.56", description = "The exact amount of the expense. Java uses BigDecimal", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("amount")
-  public Float getAmount() {
+  public BigDecimal getAmount() {
     return amount;
   }
 
-  public void setAmount(Float amount) {
+  public void setAmount(BigDecimal amount) {
     this.amount = amount;
   }
 
@@ -84,8 +105,8 @@ public class ExpenseResponse {
    * Category of the expense (e.g., Groceries, Entertainment, Travel).
    * @return category
    */
-  
-  @Schema(name = "category", example = "Travel", description = "Category of the expense (e.g., Groceries, Entertainment, Travel).", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "category", example = "Travel", description = "Category of the expense (e.g., Groceries, Entertainment, Travel).", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("category")
   public String getCategory() {
     return category;
@@ -95,23 +116,23 @@ public class ExpenseResponse {
     this.category = category;
   }
 
-  public ExpenseResponse date(LocalDate date) {
+  public ExpenseResponse date(OffsetDateTime date) {
     this.date = date;
     return this;
   }
 
   /**
-   * Date of the expense.
+   * Date and time of the expense.
    * @return date
    */
-  @Valid 
-  @Schema(name = "date", example = "2023-10-27", description = "Date of the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "date", example = "2023-10-27T14:30:00+03:00", description = "Date and time of the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("date")
-  public LocalDate getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 
-  public void setDate(LocalDate date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 
@@ -144,8 +165,8 @@ public class ExpenseResponse {
    * Unique identifier of the user who created the expense.
    * @return userId
    */
-  @Valid 
-  @Schema(name = "userId", example = "fedcba98-7654-3210-fedc-ba9876543210", description = "Unique identifier of the user who created the expense.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "userId", example = "fedcba98-7654-3210-fedc-ba9876543210", description = "Unique identifier of the user who created the expense.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("userId")
   public UUID getUserId() {
     return userId;
@@ -164,8 +185,8 @@ public class ExpenseResponse {
    * Unique identifier of the family to which the expense belongs. Null if not associated with a family.
    * @return familyId
    */
-  @Valid 
-  @Schema(name = "familyId", example = "01234567-89ab-cdef-0123-456789abcdef", description = "Unique identifier of the family to which the expense belongs. Null if not associated with a family.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "familyId", example = "01234567-89ab-cdef-0123-456789abcdef", description = "Unique identifier of the family to which the expense belongs. Null if not associated with a family.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("familyId")
   public UUID getFamilyId() {
     return familyId;
