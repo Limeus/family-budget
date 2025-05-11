@@ -50,7 +50,8 @@
 | Auth Service       | Аутентификация через Keycloak |
 | User Service       | CRUD пользователей |
 | Family Service     | Работа с семейными аккаунтами |
-| Expense / Income   | Учёт расходов и доходов |
+| Expense            | Учёт расходов |
+| Income             | Учёт доходов  |
 | Budget Service     | Хранение бюджета и лимитов |
 | Notification       | Проверка лимитов, отправка уведомлений |
 | Report Request     | Запросы на генерацию отчётов |
