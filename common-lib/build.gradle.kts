@@ -4,7 +4,7 @@ plugins {
     id("java")
 }
 
-group = "com.limeus"
+group = "com.limeus.commonlib"
 version = "1.0-SNAPSHOT"
 
 //repositories {

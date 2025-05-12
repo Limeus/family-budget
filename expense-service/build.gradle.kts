@@ -5,7 +5,7 @@ plugins {
 }
 
 
-group = "com.limeus"
+group = "com.limeus.expenseservice"
 version = "0.0.1-SNAPSHOT"
 
 java {
