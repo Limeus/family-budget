@@ -13,7 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpenseFilter {
-    private String expenseScope;
     private UUID userId;        // Идентификатор пользователя (если выбираются расходы по пользователю)
     private UUID familyId;
     private OffsetDateTime fromDate;

@@ -37,14 +37,34 @@ public class ExpenseController implements ExpenseApi{
     }
 
     @Override
+    public ResponseEntity<List<ExpenseResponse>> getAllExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        return ResponseEntity.ok(expenseService.getAllExpenses(fromDate, toDate, category));
+    }
+
+    @Override
     public ResponseEntity<ExpenseResponse> getExpenseById(UUID id) {
         return ResponseEntity.ok(expenseService.getExpense(id));
     }
 
     @Override
-    public ResponseEntity<List<ExpenseResponse>> getExpenses(String expenseScope, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
-        return ResponseEntity.ok(expenseService.getExpenses(expenseScope, fromDate, toDate, category));
+    public ResponseEntity<List<ExpenseResponse>> getFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        return ResponseEntity.ok(expenseService.getFamilyExpenses(familyId, fromDate, toDate, category));
     }
+
+    @Override
+    public ResponseEntity<List<ExpenseResponse>> getMyFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        return ResponseEntity.ok(expenseService.getMyFamilyExpenses(familyId, fromDate, toDate, category));
+    }
+
+    @Override
+    public ResponseEntity<List<ExpenseResponse>> getMyPersonalExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        return ResponseEntity.ok(expenseService.getMyPersonalExpenses(fromDate, toDate, category));
+    }
+
+//    @Override
+//    public ResponseEntity<List<ExpenseResponse>> getExpenses(String expenseScope, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+//        return ResponseEntity.ok(expenseService.getExpenses(expenseScope, fromDate, toDate, category));
+//    }
 
 
     @Override

@@ -44,8 +44,8 @@ import jakarta.annotation.Generated;
 public interface ExpenseApi {
 
     /**
-     * POST /v1/expense : Create a new expense
-     * Create a new expense for the current user.
+     * POST /v1/expenses : Create a new expense
+     * Create a new expense
      *
      * @param createExpenseRequest  (required)
      * @return The expense has been created successfully. (status code 201)
@@ -56,7 +56,7 @@ public interface ExpenseApi {
     @Operation(
         operationId = "createExpense",
         summary = "Create a new expense",
-        description = "Create a new expense for the current user.",
+        description = "Create a new expense",
         tags = { "expense" },
         responses = {
             @ApiResponse(responseCode = "201", description = "The expense has been created successfully.", content = {
@@ -72,7 +72,7 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/v1/expense",
+        value = "/v1/expenses",
         produces = { "application/json" },
         consumes = { "application/json" }
     )
@@ -83,10 +83,10 @@ public interface ExpenseApi {
 
 
     /**
-     * DELETE /v1/expense/{id} : Delete an expense
+     * DELETE /v1/expenses/{expenseId} : Delete an expense
      * Delete an expense.
      *
-     * @param id The ID of the expense to retrieve. (required)
+     * @param expenseId The ID of the expense to retrieve. (required)
      * @return The expense has been deleted successfully. (status code 204)
      *         or Unauthorized (missing or invalid JWT). (status code 401)
      *         or Expense not found. (status code 404)
@@ -109,19 +109,63 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/v1/expense/{id}"
+        value = "/v1/expenses/{expenseId}"
     )
     
     ResponseEntity<Void> deleteExpense(
-        @Parameter(name = "id", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+        @Parameter(name = "expenseId", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("expenseId") UUID expenseId
     );
 
 
     /**
-     * GET /v1/expense/{id} : Get expense by ID
+     * GET /v1/expenses : Get expenses
+     * Get a list of expenses for the current user (user + families)
+     *
+     * @param fromDate Filter expenses from this date (inclusive). (optional)
+     * @param toDate Filter expenses up to this date (inclusive). (optional)
+     * @param category Filter expenses by this category. (optional)
+     * @return The list of expenses has been found (status code 200)
+     *         or Ошибка в запросе (например, неправильный параметр) (status code 400)
+     *         or Неавторизованный доступ (отсутствует или неверен JWT) (status code 401)
+     *         or Не найдены расходы для запрашиваемого пользователя или семьи (status code 404)
+     *         or Ошибка сервера (status code 500)
+     */
+    @Operation(
+        operationId = "getAllExpenses",
+        summary = "Get expenses",
+        description = "Get a list of expenses for the current user (user + families)",
+        tags = { "expense" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "The list of expenses has been found", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ExpenseResponse.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Ошибка в запросе (например, неправильный параметр)"),
+            @ApiResponse(responseCode = "401", description = "Неавторизованный доступ (отсутствует или неверен JWT)"),
+            @ApiResponse(responseCode = "404", description = "Не найдены расходы для запрашиваемого пользователя или семьи"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerHttpAuthentication")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/v1/expenses",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<ExpenseResponse>> getAllExpenses(
+        @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+        @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
+        @Parameter(name = "category", description = "Filter expenses by this category.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "category", required = false) String category
+    );
+
+
+    /**
+     * GET /v1/expenses/{expenseId} : Get expense by ID
      * Get details of a specific expense by its ID.
      *
-     * @param id The ID of the expense to retrieve. (required)
+     * @param expenseId The ID of the expense to retrieve. (required)
      * @return The expense has been found. (status code 200)
      *         or Unauthorized (missing or invalid JWT). (status code 401)
      *         or Expense not found. (status code 404)
@@ -146,20 +190,20 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/v1/expense/{id}",
+        value = "/v1/expenses/{expenseId}",
         produces = { "application/json" }
     )
     
     ResponseEntity<ExpenseResponse> getExpenseById(
-        @Parameter(name = "id", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+        @Parameter(name = "expenseId", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("expenseId") UUID expenseId
     );
 
 
     /**
-     * GET /v1/expense : Get expenses
-     * Get a list of expenses for the current user or the whole family
+     * GET /v1/expenses/family/{familyId} : Get expenses
+     * Get a list of expenses for the current family
      *
-     * @param expenseScope Specifies whose expenses to display. \&quot;user\&quot; — expenses of the current user only, \&quot;family\&quot; — expenses of the whole family. (optional, default to user)
+     * @param familyId The ID of the family. (required)
      * @param fromDate Filter expenses from this date (inclusive). (optional)
      * @param toDate Filter expenses up to this date (inclusive). (optional)
      * @param category Filter expenses by this category. (optional)
@@ -170,9 +214,9 @@ public interface ExpenseApi {
      *         or Ошибка сервера (status code 500)
      */
     @Operation(
-        operationId = "getExpenses",
+        operationId = "getFamilyExpenses",
         summary = "Get expenses",
-        description = "Get a list of expenses for the current user or the whole family",
+        description = "Get a list of expenses for the current family",
         tags = { "expense" },
         responses = {
             @ApiResponse(responseCode = "200", description = "The list of expenses has been found", content = {
@@ -189,12 +233,12 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/v1/expense",
+        value = "/v1/expenses/family/{familyId}",
         produces = { "application/json" }
     )
     
-    ResponseEntity<List<ExpenseResponse>> getExpenses(
-        @Parameter(name = "expenseScope", description = "Specifies whose expenses to display. \"user\" — expenses of the current user only, \"family\" — expenses of the whole family.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "expenseScope", required = false, defaultValue = "user") String expenseScope,
+    ResponseEntity<List<ExpenseResponse>> getFamilyExpenses(
+        @Parameter(name = "familyId", description = "The ID of the family.", required = true, in = ParameterIn.PATH) @PathVariable("familyId") UUID familyId,
         @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
         @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
         @Parameter(name = "category", description = "Filter expenses by this category.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "category", required = false) String category
@@ -202,10 +246,100 @@ public interface ExpenseApi {
 
 
     /**
-     * PUT /v1/expense/{id} : Update an existing expense
+     * GET /v1/expenses/my/family/{familyId} : Get expenses
+     * Get a list of expenses for the current user (user only in specified family)
+     *
+     * @param familyId The ID of the family. (required)
+     * @param fromDate Filter expenses from this date (inclusive). (optional)
+     * @param toDate Filter expenses up to this date (inclusive). (optional)
+     * @param category Filter expenses by this category. (optional)
+     * @return The list of expenses has been found (status code 200)
+     *         or Ошибка в запросе (например, неправильный параметр) (status code 400)
+     *         or Неавторизованный доступ (отсутствует или неверен JWT) (status code 401)
+     *         or Не найдены расходы для запрашиваемого пользователя или семьи (status code 404)
+     *         or Ошибка сервера (status code 500)
+     */
+    @Operation(
+        operationId = "getMyFamilyExpenses",
+        summary = "Get expenses",
+        description = "Get a list of expenses for the current user (user only in specified family)",
+        tags = { "expense" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "The list of expenses has been found", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ExpenseResponse.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Ошибка в запросе (например, неправильный параметр)"),
+            @ApiResponse(responseCode = "401", description = "Неавторизованный доступ (отсутствует или неверен JWT)"),
+            @ApiResponse(responseCode = "404", description = "Не найдены расходы для запрашиваемого пользователя или семьи"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerHttpAuthentication")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/v1/expenses/my/family/{familyId}",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<ExpenseResponse>> getMyFamilyExpenses(
+        @Parameter(name = "familyId", description = "The ID of the family.", required = true, in = ParameterIn.PATH) @PathVariable("familyId") UUID familyId,
+        @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+        @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
+        @Parameter(name = "category", description = "Filter expenses by this category.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "category", required = false) String category
+    );
+
+
+    /**
+     * GET /v1/expenses/my/personal : Get expenses
+     * Get a list of expenses for the current user (user only without families)
+     *
+     * @param fromDate Filter expenses from this date (inclusive). (optional)
+     * @param toDate Filter expenses up to this date (inclusive). (optional)
+     * @param category Filter expenses by this category. (optional)
+     * @return The list of expenses has been found (status code 200)
+     *         or Ошибка в запросе (например, неправильный параметр) (status code 400)
+     *         or Неавторизованный доступ (отсутствует или неверен JWT) (status code 401)
+     *         or Не найдены расходы для запрашиваемого пользователя или семьи (status code 404)
+     *         or Ошибка сервера (status code 500)
+     */
+    @Operation(
+        operationId = "getMyPersonalExpenses",
+        summary = "Get expenses",
+        description = "Get a list of expenses for the current user (user only without families)",
+        tags = { "expense" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "The list of expenses has been found", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ExpenseResponse.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Ошибка в запросе (например, неправильный параметр)"),
+            @ApiResponse(responseCode = "401", description = "Неавторизованный доступ (отсутствует или неверен JWT)"),
+            @ApiResponse(responseCode = "404", description = "Не найдены расходы для запрашиваемого пользователя или семьи"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+        },
+        security = {
+            @SecurityRequirement(name = "bearerHttpAuthentication")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/v1/expenses/my/personal",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<ExpenseResponse>> getMyPersonalExpenses(
+        @Parameter(name = "fromDate", description = "Filter expenses from this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fromDate,
+        @Parameter(name = "toDate", description = "Filter expenses up to this date (inclusive).", in = ParameterIn.QUERY) @Valid @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime toDate,
+        @Parameter(name = "category", description = "Filter expenses by this category.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "category", required = false) String category
+    );
+
+
+    /**
+     * PUT /v1/expenses/{expenseId} : Update an existing expense
      * Update an existing expense.
      *
-     * @param id The ID of the expense to retrieve. (required)
+     * @param expenseId The ID of the expense to retrieve. (required)
      * @param updateExpenseRequest  (required)
      * @return The expense has been updated successfully. (status code 200)
      *         or Bad request (e.g., invalid input). (status code 400)
@@ -233,13 +367,13 @@ public interface ExpenseApi {
     )
     @RequestMapping(
         method = RequestMethod.PUT,
-        value = "/v1/expense/{id}",
+        value = "/v1/expenses/{expenseId}",
         produces = { "application/json" },
         consumes = { "application/json" }
     )
     
     ResponseEntity<ExpenseResponse> updateExpense(
-        @Parameter(name = "id", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
+        @Parameter(name = "expenseId", description = "The ID of the expense to retrieve.", required = true, in = ParameterIn.PATH) @PathVariable("expenseId") UUID expenseId,
         @Parameter(name = "UpdateExpenseRequest", description = "", required = true) @Valid @RequestBody UpdateExpenseRequest updateExpenseRequest
     );
 

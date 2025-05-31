@@ -3,6 +3,7 @@ package com.limeus.expenseservice.service;
 import com.limeus.expenseservice.dto.CreateExpenseRequest;
 import com.limeus.expenseservice.dto.ExpenseResponse;
 import com.limeus.expenseservice.dto.UpdateExpenseRequest;
+import org.springframework.http.ResponseEntity;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -15,10 +16,15 @@ public interface ExpenseService {
 
     ExpenseResponse getExpense(UUID id);
 
-    List<ExpenseResponse> getExpenses(String expenseScope, OffsetDateTime fromDate, OffsetDateTime toDate, String category);
+//    List<ExpenseResponse> getExpenses(String expenseScope, OffsetDateTime fromDate, OffsetDateTime toDate, String category);
 
     ExpenseResponse updateExpense(UUID id, UpdateExpenseRequest updateExpenseRequest);
 
+    List<ExpenseResponse> getFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category);
 
+    List<ExpenseResponse> getAllExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category);
 
+    List<ExpenseResponse> getMyFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category);
+
+    List<ExpenseResponse> getMyPersonalExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category);
 }

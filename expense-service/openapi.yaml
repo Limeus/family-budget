@@ -7,17 +7,16 @@ servers:
   - url: 'http://localhost:8080'
     description: Local debug server
 paths:
-  /v1/expense:
+  /v1/expenses:
     get:
       summary: Get expenses
-      description: Get a list of expenses for the current user or the whole family
-      operationId: getExpenses
+      description: Get a list of expenses for the current user (user + families)
+      operationId: getAllExpenses
       tags:
         - expense
       security:
         - bearerHttpAuthentication: [ ]
       parameters:
-        - $ref: "#/components/parameters/ExpenseScope"
         - $ref: "#/components/parameters/FromDate"
         - $ref: "#/components/parameters/ToDate"
         - $ref: "#/components/parameters/Category"
@@ -40,7 +39,7 @@ paths:
           description: "Ошибка сервера"
     post:
       summary: Create a new expense
-      description: Create a new expense for the current user.
+      description: Create a new expense
       operationId: createExpense
       tags:
         - expense
@@ -65,8 +64,99 @@ paths:
           description: "Unauthorized (missing or invalid JWT)."
         500:
           description: "Server error."
-
-  /v1/expense/{id}:
+  /v1/expenses/my/personal:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current user (user only without families)
+      operationId: getMyPersonalExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/my/family/{familyId}:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current user (user only in specified family)
+      operationId: getMyFamilyExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FamilyId"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/family/{familyId}:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current family
+      operationId: getFamilyExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FamilyId"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/{expenseId}:
     get:
       summary: Get expense by ID
       description: Get details of a specific expense by its ID.
@@ -161,24 +251,23 @@ components:
       bearerFormat: JWT
 
   parameters:
-    ExpenseScope:
-      in: query
-      name: expenseScope
-      description: Specifies whose expenses to display.
-        "user" — expenses of the current user only, "family" — expenses of the whole family.
-      required: false
-      schema:
-        type: string
-        enum: [ user, family ]
-        default: user
     ExpenseId:
       in: path
-      name: id
+      name: expenseId
       description: The ID of the expense to retrieve.
       required: true
       schema:
         type: string
         format: uuid
+    FamilyId:
+      in: path
+      name: familyId
+      description: The ID of the family.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
     FromDate:
       in: query
       name: fromDate
@@ -269,6 +358,12 @@ components:
           type: string
           description: "Optional comment about the expense."
           example: "Bought groceries for the week."
+        familyId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Unique identifier of the family to which the expense belongs. Null if not associated with a family."
+          example: "01234567-89ab-cdef-0123-456789abcdef"
       required:
         - amount
         - category

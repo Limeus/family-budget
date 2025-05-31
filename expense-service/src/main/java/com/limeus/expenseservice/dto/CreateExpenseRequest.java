@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 import java.time.OffsetDateTime;
@@ -32,6 +33,8 @@ public class CreateExpenseRequest {
   private OffsetDateTime date;
 
   private @Nullable String comment;
+
+  private @Nullable UUID familyId;
 
   public CreateExpenseRequest() {
     super();
@@ -126,6 +129,26 @@ public class CreateExpenseRequest {
     this.comment = comment;
   }
 
+  public CreateExpenseRequest familyId(UUID familyId) {
+    this.familyId = familyId;
+    return this;
+  }
+
+  /**
+   * Unique identifier of the family to which the expense belongs. Null if not associated with a family.
+   * @return familyId
+   */
+  @Valid 
+  @Schema(name = "familyId", example = "01234567-89ab-cdef-0123-456789abcdef", description = "Unique identifier of the family to which the expense belongs. Null if not associated with a family.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("familyId")
+  public UUID getFamilyId() {
+    return familyId;
+  }
+
+  public void setFamilyId(UUID familyId) {
+    this.familyId = familyId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -138,12 +161,13 @@ public class CreateExpenseRequest {
     return Objects.equals(this.amount, createExpenseRequest.amount) &&
         Objects.equals(this.category, createExpenseRequest.category) &&
         Objects.equals(this.date, createExpenseRequest.date) &&
-        Objects.equals(this.comment, createExpenseRequest.comment);
+        Objects.equals(this.comment, createExpenseRequest.comment) &&
+        Objects.equals(this.familyId, createExpenseRequest.familyId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, category, date, comment);
+    return Objects.hash(amount, category, date, comment, familyId);
   }
 
   @Override
@@ -154,6 +178,7 @@ public class CreateExpenseRequest {
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
     sb.append("    comment: ").append(toIndentedString(comment)).append("\n");
+    sb.append("    familyId: ").append(toIndentedString(familyId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,6 +1,7 @@
 package com.limeus.expenseservice.service;
 
 
+import com.limeus.commonlib.jwt.JwtClaimsManager;
 import com.limeus.expenseservice.dto.CreateExpenseRequest;
 import com.limeus.expenseservice.dto.ExpenseResponse;
 import com.limeus.expenseservice.dto.UpdateExpenseRequest;
@@ -29,12 +30,17 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final ExpenseMapper expenseMapper;
     private final UpdateExpenseMapper updateExpenseMapper;
+    private final JwtClaimsManager jwtClaimsManager;
+
+    private final static UUID USER_ID = UUID.randomUUID(); //ЗАГЛУШКА
 
     private static final String EXPENSE_NOT_FOUND_MESSAGE = "Expense not exists";
 
     @Override
     public ExpenseResponse createExpense(CreateExpenseRequest createExpenseRequest) {
         ExpenseEntity expense = expenseMapper.toEntity(createExpenseRequest);
+//        expense.setUserId(UUID.fromString(jwtClaimsManager.extractUserId()));
+        expense.setUserId(USER_ID); //ЗАГЛУШКА
         ExpenseEntity saved = expenseRepository.save(expense);
         return expenseMapper.toResponse(saved);
     }
@@ -53,43 +59,42 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseResponse> getExpenses(String expenseScope, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+    @Transactional
+    public ExpenseResponse updateExpense(UUID id, UpdateExpenseRequest updateExpenseRequest) {
+        ExpenseEntity currentExpense = getExpenseOrThrow(id);
+        updateExpenseMapper.updateEntity(updateExpenseRequest, currentExpense); // обновляет currentExpense
+        return expenseMapper.toResponse(currentExpense);
+    }
 
-        /// ///////////////////////////
-        // Заглушка для fake данных
-        UUID fakeUserId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        UUID fakeFamilyId = UUID.fromString("22222222-2222-2222-2222-222222222222");
-
-        // Логика выбора scope
-        if (expenseScope == null || expenseScope.equals("user")) {
-            expenseScope = "user";  // По умолчанию "user"
-        } else if (expenseScope.equals("family")) {
-            expenseScope = "family";
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid expense scope: " + expenseScope);
-        }
-        /// ///////////////////////////
+    @Override
+    public List<ExpenseResponse> getFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        //        UUID userId = UUID.fromString(jwtClaimsManager.extractUserId());
 
         ExpenseFilter filter = ExpenseFilter.builder()
-                .expenseScope(expenseScope)
+//                .userId(userId)
+                .userId(USER_ID)
+                .familyId(familyId)
                 .fromDate(fromDate)
                 .toDate(toDate)
                 .category(category)
                 .build();
+        Specification<ExpenseEntity> spec = ExpenseSpecifications.byFilter(filter);
 
-//        Specification<ExpenseEntity> spec = ExpenseSpecifications.byFilter(filter);
-        // ЭТО - ВЕРНУТЬ
+        List<ExpenseEntity> matchedExpenses = expenseRepository.findAll(spec);
 
-        /// ///////////////////////////
-        Specification<ExpenseEntity> spec;
-        if ("user".equals(expenseScope)) {
-            // Заглушка для user
-            spec = ExpenseSpecifications.byUserId(fakeUserId, filter);  // Передаем fakeUserId для тестов
-        } else {
-            // Заглушка для family
-            spec = ExpenseSpecifications.byFamilyId(fakeFamilyId, filter);  // Передаем fakeFamilyId для тестов
-        }
-        /// ///////////////////////////
+        return matchedExpenses.stream()
+                .map(expenseMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ExpenseResponse> getAllExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+        ExpenseFilter filter = ExpenseFilter.builder()
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .category(category)
+                .build();
+        Specification<ExpenseEntity> spec = ExpenseSpecifications.byFilter(filter);
 
         List<ExpenseEntity> matchedExpenses = expenseRepository.findAll(spec);
 
@@ -100,11 +105,45 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    @Transactional
-    public ExpenseResponse updateExpense(UUID id, UpdateExpenseRequest updateExpenseRequest) {
-        ExpenseEntity currentExpense = getExpenseOrThrow(id);
-        updateExpenseMapper.updateEntity(updateExpenseRequest, currentExpense); // обновляет currentExpense
-        return expenseMapper.toResponse(currentExpense);
+    public List<ExpenseResponse> getMyFamilyExpenses(UUID familyId, OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+//        UUID userId = UUID.fromString(jwtClaimsManager.extractUserId());
+
+        ExpenseFilter filter = ExpenseFilter.builder()
+                //                .userId(userId)
+                .userId(USER_ID)
+                .familyId(familyId)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .category(category)
+                .build();
+        Specification<ExpenseEntity> spec = ExpenseSpecifications.byFilter(filter);
+
+        List<ExpenseEntity> matchedExpenses = expenseRepository.findAll(spec);
+
+        return matchedExpenses.stream()
+                .map(expenseMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ExpenseResponse> getMyPersonalExpenses(OffsetDateTime fromDate, OffsetDateTime toDate, String category) {
+//        UUID userId = UUID.fromString(jwtClaimsManager.extractUserId());
+
+        ExpenseFilter filter = ExpenseFilter.builder()
+                //                .userId(userId)
+                .userId(USER_ID)
+                .familyId(null)
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .category(category)
+                .build();
+        Specification<ExpenseEntity> spec = ExpenseSpecifications.byPersonalExpenses(filter);
+
+        List<ExpenseEntity> matchedExpenses = expenseRepository.findAll(spec);
+
+        return matchedExpenses.stream()
+                .map(expenseMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     private ExpenseEntity getExpenseOrThrow(UUID id) {

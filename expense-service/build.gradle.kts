@@ -15,6 +15,7 @@ java {
 }
 
 dependencies {
+	implementation(project(":common-lib"))
 	implementation(libs.database.postgresql)
 	implementation(libs.database.h2)
 }
