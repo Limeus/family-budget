@@ -4,17 +4,19 @@ plugins {
     id("java")
 }
 
-group = "com.limeus"
+group = "com.limeus.commonlib"
 version = "1.0-SNAPSHOT"
 
 //repositories {
 //    mavenCentral()
 //}
 
-//dependencies {
+dependencies {
 //    testImplementation(platform("org.junit:junit-bom:5.10.0"))
 //    testImplementation("org.junit.jupiter:junit-jupiter")
-//}
+    implementation(libs.bundles.jwt)
+    implementation(libs.bundles.resourceSecurity)
+}
 
 tasks.test {
     useJUnitPlatform()

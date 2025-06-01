@@ -1,23 +1,23 @@
 plugins {
-	java
-	`fb-microservice`
-	`fb-openapi-generation`
+    java
+    `fb-microservice`
+    `fb-openapi-generation`
 }
 
 
-group = "com.limeus.expenseservice"
+group = "com.limeus.familyservice"
 version = "0.0.1-SNAPSHOT"
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 dependencies {
-	implementation(project(":common-lib"))
-	implementation(libs.database.postgresql)
-	implementation(libs.database.h2)
+    implementation(project(":common-lib"))
+    implementation(libs.database.postgresql)
+    implementation(libs.database.h2)
 }
 
 //repositories {
@@ -31,7 +31,7 @@ dependencies {
 //}
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 //tasks.register("prepareKotlinBuildScriptModel") {}

@@ -1,0 +1,413 @@
+openapi: 3.1.0
+info:
+  title: Expense microservice
+  description: Api specification for expense microservice
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+    description: Local debug server
+paths:
+  /v1/expenses:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current user (user + families)
+      operationId: getAllExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+    post:
+      summary: Create a new expense
+      description: Create a new expense
+      operationId: createExpense
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseRequest'
+      responses:
+        201:
+          description: "The expense has been created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Bad request (e.g., invalid input)."
+        401:
+          description: "Unauthorized (missing or invalid JWT)."
+        500:
+          description: "Server error."
+  /v1/expenses/my/personal:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current user (user only without families)
+      operationId: getMyPersonalExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/my/family/{familyId}:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current user (user only in specified family)
+      operationId: getMyFamilyExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FamilyId"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/family/{familyId}:
+    get:
+      summary: Get expenses
+      description: Get a list of expenses for the current family
+      operationId: getFamilyExpenses
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/FamilyId"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/Category"
+      responses:
+        200:
+          description: "The list of expenses has been found"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Ошибка в запросе (например, неправильный параметр)"
+        401:
+          description: "Неавторизованный доступ (отсутствует или неверен JWT)"
+        404:
+          description: "Не найдены расходы для запрашиваемого пользователя или семьи"
+        500:
+          description: "Ошибка сервера"
+  /v1/expenses/{expenseId}:
+    get:
+      summary: Get expense by ID
+      description: Get details of a specific expense by its ID.
+      operationId: getExpenseById
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/ExpenseId"
+      responses:
+        200:
+          description: "The expense has been found."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        401:
+          description: "Unauthorized (missing or invalid JWT)."
+        404:
+          description: "Expense not found."
+        500:
+          description: "Server error."
+    put:
+      summary: Update an existing expense
+      description: Update an existing expense.
+      operationId: updateExpense
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/ExpenseId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExpenseRequest'
+      responses:
+        200:
+          description: "The expense has been updated successfully."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpenseResponse'
+        400:
+          description: "Bad request (e.g., invalid input)."
+        401:
+          description: "Unauthorized (missing or invalid JWT)."
+        404:
+          description: "Expense not found."
+        500:
+          description: "Server error."
+    delete:
+      summary: Delete an expense
+      description: Delete an expense.
+      operationId: deleteExpense
+      tags:
+        - expense
+      security:
+        - bearerHttpAuthentication: [ ]
+      parameters:
+        - $ref: "#/components/parameters/ExpenseId"
+      responses:
+        204:
+          description: "The expense has been deleted successfully."
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/ExpenseResponse"
+        401:
+          description: "Unauthorized (missing or invalid JWT)."
+        404:
+          description: "Expense not found."
+        500:
+          description: "Server error."
+
+
+
+
+
+
+
+
+components:
+  securitySchemes:
+    bearerHttpAuthentication:
+      description: Bearer token using a JWT
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ExpenseId:
+      in: path
+      name: expenseId
+      description: The ID of the expense to retrieve.
+      required: true
+      schema:
+        type: string
+        format: uuid
+    FamilyId:
+      in: path
+      name: familyId
+      description: The ID of the family.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    FromDate:
+      in: query
+      name: fromDate
+      description: Filter expenses from this date (inclusive).
+      required: false
+      schema:
+        type: string
+        format: date-time
+    ToDate:
+      in: query
+      name: toDate
+      description: Filter expenses up to this date (inclusive).
+      required: false
+      schema:
+        type: string
+        format: date-time
+    Category:
+      in: query
+      name: category
+      description: Filter expenses by this category.
+      required: false
+      schema:
+        type: string
+
+  schemas:
+    ExpenseResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier of the expense."
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        amount:
+          description: "The exact amount of the expense. Java uses BigDecimal"
+          type: number
+          format: decimal
+          example: 1234.56
+        category:
+          type: string
+          description: "Category of the expense (e.g., Groceries, Entertainment, Travel)."
+          example: "Travel"
+        date:
+          type: string
+          format: date-time
+          description: "Date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
+        comment:
+          type: string
+          description: "Optional comment or note about the expense."
+          example: "Bought groceries at the local supermarket."
+        userId:
+          type: string
+          format: uuid
+          description: "Unique identifier of the user who created the expense."
+          example: "fedcba98-7654-3210-fedc-ba9876543210"
+        familyId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Unique identifier of the family to which the expense belongs. Null if not associated with a family."
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+      required:
+        - id
+        - amount
+        - category
+        - date
+        - userId
+        - familyId
+    CreateExpenseRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: "The amount of the expense."
+          example: 50.00
+        category:
+          type: string
+          description: "The category of the expense."
+          example: "Travel"
+        date:
+          type: string
+          format: date-time
+          description: "Date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
+        comment:
+          type: string
+          description: "Optional comment about the expense."
+          example: "Bought groceries for the week."
+        familyId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "Unique identifier of the family to which the expense belongs. Null if not associated with a family."
+          example: "01234567-89ab-cdef-0123-456789abcdef"
+      required:
+        - amount
+        - category
+        - date
+    UpdateExpenseRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: "The updated amount of the expense."
+          example: 60.00
+        category:
+          type: string
+          description: "The updated category of the expense."
+          example: "Entertainment"
+        date:
+          type: string
+          format: date-time
+          description: "The updated date and time of the expense."
+          example: "2023-10-27T14:30:00+03:00"
+        comment:
+          type: string
+          description: "Updated comment about the expense."
+          example: "Went to the movies."
+#    ExpenseFilterRequest:
+#      type: object
+#      properties:
+#        scope:
+#          type: string
+#          enum: [ user, family ]
+#          description: "The scope of the expenses to filter. 'user' for the current user's expenses, 'family' for the entire family's expenses."
+#          example: "user"
+#        fromDate:
+#          type: string
+#          format: date
+#          description: "Filter expenses from this date (inclusive)."
+#          example: "2023-10-01"
+#        toDate:
+#          type: string
+#          format: date
+#          description: "Filter expenses up to this date (inclusive)."
+#          example: "2023-10-31"
+#        category:
+#          type: string
+#          description: "Filter expenses by this category."
+#          example: "Travel"

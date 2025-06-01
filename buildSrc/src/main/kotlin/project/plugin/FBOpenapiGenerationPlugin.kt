@@ -33,8 +33,10 @@ class FBOpenapiGenerationPlugin : Plugin<Project> {
         tasks.named<GenerateTask>(OPENAPI_GENERATE_TASK_NAME) {
             dependsOn(ADD_GLOBAL_OPENAPI_GENERATION_IGNORE_TASK_NAME)
             generatorName.set("spring")
-            inputSpec.set("$projectDir/openapi.yaml")
-            outputDir.set("$projectDir/")
+//            inputSpec.set("$projectDir/openapi.yaml")
+//            outputDir.set("$projectDir/")
+            inputSpec.set(file("$projectDir/openapi.yaml").toURI().toString())
+            outputDir.set(file("$projectDir/").toString()) // это можно оставить как есть, URI здесь не нужен
             apiPackage.set("${project.group}.api")
             modelPackage.set("${project.group}.dto")
             invokerPackage.set("${project.group}.invoker")
@@ -59,6 +61,26 @@ class FBOpenapiGenerationPlugin : Plugin<Project> {
                 val globalIgnore = file("$rootDir/.openapi-generator-ignore")
                 val projectIgnore = file("$projectDir/.openapi-generator-ignore")
                 val targetDir = file("$projectDir/")
+
+                // Создай глобальный .openapi-generator-ignore, если его нет
+                if (!globalIgnore.exists()) {
+                    //  globalIgnore.writeText("# Global OpenAPI ignore file\n") - trash
+                    globalIgnore.writeText("""
+                        # Global OpenAPI ignore file
+                        # That file just tells the generator,
+                        #"don't touch these files, don't create or overwrite them."
+                
+                        # this file should be in every submodule.
+                        pom.xml
+                        build.gradle
+                        build.gradle.kts
+                        **/ApiUtil.java
+                        **/resources/*.yml
+                        **/resources/*.configuration
+                        *.md
+                        """.trimIndent())
+                }
+
                 if (projectIgnore.exists()) {
                     val lines = globalIgnore.readLines().toSet() - projectIgnore.readLines().toSet()
                     if (lines.isNotEmpty()) {

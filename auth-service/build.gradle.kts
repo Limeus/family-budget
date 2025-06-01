@@ -4,7 +4,7 @@ plugins {
     java
 }
 
-group = "com.limeus"
+group = "com.limeus.authservice"
 version = "0.0.1-SNAPSHOT"
 
 java {
