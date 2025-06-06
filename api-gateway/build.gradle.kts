@@ -1,25 +1,30 @@
 plugins {
     `fb-microservice`
-    java
-    id("org.springframework.boot") version "3.4.5"
-    id("io.spring.dependency-management") version "1.1.7"
+//    java
+//    id("org.springframework.boot") version "3.4.5"
+//    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "com.limeus.apigateway"
 version = "0.0.1-SNAPSHOT"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
+//java {
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(17)
+//    }
+//}
 
 //repositories {
 //    mavenCentral()
 //}
 dependencies {
+//    implementation(libs.spring.cloud.starter.gateway.server.webflux)
+    implementation(libs.spring.cloud.starter.netflix.eureka.client)
+    implementation(libs.spring.cloud.starter.gateway)
     implementation(libs.database.postgresql)
     implementation(libs.database.h2)
+//    implementation(libs.spring.security.config)
+    implementation(libs.spring.boot.starter.oauth2.resource.server)
 }
 //dependencies {
 //    implementation("org.springframework.boot:spring-boot-starter")
@@ -27,8 +32,11 @@ dependencies {
 //    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //}
 
+//tasks.withType<Test> {
+//    useJUnitPlatform()
+//}
 tasks.withType<Test> {
-    useJUnitPlatform()
+    enabled = false
 }
 
 

@@ -1,7 +1,6 @@
 plugins {
     `fb-microservice`
     `fb-openapi-generation`
-    id("java")
 }
 
 group = "com.limeus.commonlib"
@@ -18,8 +17,8 @@ dependencies {
     implementation(libs.bundles.resourceSecurity)
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
+//tasks.test {
+//    useJUnitPlatform()
+//}
 
 //tasks.register("prepareKotlinBuildScriptModel") {}

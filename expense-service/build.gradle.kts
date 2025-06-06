@@ -1,5 +1,5 @@
 plugins {
-	java
+//	java
 	`fb-microservice`
 	`fb-openapi-generation`
 }
@@ -8,14 +8,15 @@ plugins {
 group = "com.limeus.expenseservice"
 version = "0.0.1-SNAPSHOT"
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(17)
+//	}
+//}
 
 dependencies {
 	implementation(project(":common-lib"))
+	implementation(libs.spring.cloud.starter.netflix.eureka.client)
 	implementation(libs.database.postgresql)
 	implementation(libs.database.h2)
 }
@@ -30,8 +31,8 @@ dependencies {
 //	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //}
 
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
+//tasks.withType<Test> {
+//	useJUnitPlatform()
+//}
 
 //tasks.register("prepareKotlinBuildScriptModel") {}
