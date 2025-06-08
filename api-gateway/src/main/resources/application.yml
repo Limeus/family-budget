@@ -34,8 +34,3 @@ logging:
     reactor.netty.http.client: DEBUG
     reactor.netty.http.server: DEBUG
     org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
-#  cloud:
-#    gateway:
-#      server:
-#        webflux:
-#          routes:

@@ -16,9 +16,13 @@ services:
       - keycloak_net
 
   keycloak:
-    image: quay.io/keycloak/keycloak
+#    image: quay.io/keycloak/keycloak
     container_name: keycloak
-    command: start-dev
+#    command: start-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.keycloak
+
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
@@ -28,6 +32,12 @@ services:
       KC_HOSTNAME: localhost
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6378
+#      KAFKA_BOOTSTRAP_SERVERS: localhost:9092,localhost:9094
+      KAFKA_BOOTSTRAP_SERVERS: kafka-1:9090,kafka-2:9090,kafka-3:9090
+      KAFKA_TOPIC: session-events
     ports:
       - "9090:8080"
     depends_on:
