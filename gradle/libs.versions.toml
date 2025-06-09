@@ -4,7 +4,7 @@
 [versions]
 kotlin = "2.1.20"
 openapiGenerator = "7.13.0"
-springframeworkBoot = "3.4.5"
+springframeworkBoot = "3.5.0"
 springDependencyManagment = "1.1.7"
 springdoc = "2.8.6"
 jakartaValidation = "3.1.1"
@@ -14,6 +14,7 @@ googleCryptoTink = "1.17.0"
 mapstruct = "1.6.3"
 nimbusJoseJwt = "10.2"
 springMessaging = "6.2.6"
+springCloudGateway = "4.3.0"
 
 [libraries]
 apache-kafka = { group = "org.apache.kafka", name = "kafka-streams" }
@@ -47,6 +48,12 @@ spring-kafka-test = { group = "org.springframework.kafka", name = "spring-kafka-
 spring-messaging = { group = "org.springframework", name = "spring-messaging", version.ref = "springMessaging" } # совместим со Spring Boot 3.4.5
 spring-security-config = { group = "org.springframework.security", name = "spring-security-config" }
 spring-security-test = { group = "org.springframework.security", name = "spring-security-test" }
+#spring-security-oauth2-resource-server = {group = "org.springframework.security", name = "spring-security-oauth2-resource-server"}
+#spring-cloud-gateway-server = {group = "org.springframework.cloud", name = "spring-cloud-gateway-server", version.ref = "springCloudGateway"}
+spring-cloud-starter-gateway = {group = "org.springframework.cloud", name = "spring-cloud-starter-gateway", version.ref = "springCloudGateway"}
+spring-boot-starter-webflux = {group = "org.springframework.boot", name = "spring-boot-starter-webflux"}
+spring-cloud-starter-netflix-eureka-server = {group = "org.springframework.cloud", name = "spring-cloud-starter-netflix-eureka-server", version.ref = "springCloudGateway"}
+spring-cloud-starter-netflix-eureka-client = {group = "org.springframework.cloud", name = "spring-cloud-starter-netflix-eureka-client", version.ref = "springCloudGateway"}
 
 tink = { group = "com.google.crypto.tink", name = "tink", version.ref = "googleCryptoTink" }
 

@@ -1,0 +1,5 @@
+FROM quay.io/keycloak/keycloak:26.2.5
+
+COPY keycloak-event-listener-family-budget.jar /opt/keycloak/providers/
+
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start-dev"]

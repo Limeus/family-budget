@@ -1,5 +1,4 @@
 plugins {
-    java
     `fb-microservice`
     `fb-openapi-generation`
 }
@@ -8,11 +7,6 @@ plugins {
 group = "com.limeus.familyservice"
 version = "0.0.1-SNAPSHOT"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
 
 dependencies {
     implementation(project(":common-lib"))
@@ -30,8 +24,8 @@ dependencies {
 //	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 //}
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+//tasks.withType<Test> {
+//    useJUnitPlatform()
+//}
 
 //tasks.register("prepareKotlinBuildScriptModel") {}
